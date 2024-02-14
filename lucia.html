@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>. . .</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #ffccff; /* Fondo rosado */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align:center;
+            font-family:"Roboto";
+           }
+        #emoji {
+            font-size: 50px;
+            border: 2px red solid;
+            cursor: pointer;
+        }
+        #mensaje {
+
+            max-width:400px;
+             overflow: hidden;
+            text-align: center;
+            font-size: 20px;
+            margin-top: 500px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="emoji"  onclick="mostrarMensaje()">dele acá💌</div><br>
+
+    <div id="mensaje" style="display:none;">
+              <img src="https://media.tenor.com/j3SjoogObhsAAAAC/hello-kitty-hug.gif">
+        <br>
+        <p>mae podria seguir cno esta lista infinita de cualidades tan hermosas q vos posees, no sé q me pasa pero, d verdad cada q pienso en vos me da una sensación d felicidad y calidez, de tranquilidad y desesperación, cada q pienso en vos y tu voz tan unica, tus ojitos tan preciosos, tu carita tan hermosa, cuando veo por esos ojitos a una persona tan inteligente, única, legalmente no puedo evitar pensa quiero hacerte mil mensajitos d estos culiolos, para mostrarte lo tanto que te amo, en lo linda q eres por dentro, sos tan linda que el sol se queda corto de lo mucho q iluminas mi vida,, quiero entenderte y llenarte de tanto cariño y seguridad y todo. no puedo evitar pensar en nosotros dos acostaditos y abrazados, llenandote de besitos tu frente,  lo unico que quiero es estar contigo, hacer monton de poladitas juntos, vernos seguido (y sé que no siempre vas a querer salir pero sabes como soy yo la verdad), agarrar tu carita y decirte n la cara lo preciosa que eres, abrazarte y no soltarte nunca, hay quienes dicen que cuando uno abraza a alguien las almas se separan para juntarse por un microsegundo, y con vos lo siento asi, tus abrazos me dan demasiada paz, tambien me hace feliz darme cuenta lo mucho q te hago feliz cada dìa que hablamos, y cada que nos vemos ver tu sonrisita tan preciosa q sale cuando hago mis chistes culiolos, te amo con cada latido de mi corazon mi lucita preciosa, te amo como nunca he amado a alguien en mi vida, antes dudaba si me amabas de verdad,  ahora no me quedan dudas de tu amor, no quiero que en ningun momento dudes en si te amo o no, por que obviamente te amo,  eres una persona cariñosa, chistosa, unica, inteligentisima, madura, y en general todo lo que alguien podria desear, alguien que se puede confiar, eres una excelente persona amor,  no puedo haber encontrado a alguien mejor jamás,  y tu fisico.. dios mio, eres malditamente preciosa, cada parte de vos es perfecta, tu carita es hermosa,  tus ojitos tan chiquititos y me dan ganas como de tatuarmelos, a veces se te achinan, cuando sonries, también me encanta un monton tu sonrisa. tu nariz es preciosisima,  y tu pelo ni que hablar, como si fuera el pelo de afrodita. todo  de vos es hermoso, tanto afuera como por dentro, gracias por aparecer en mi vida, y gracias por permitirme amarte de nuevo, no quiero perderte, eres super especial para mi, y lucia, por favor, no dejes que nadie te diga lo contrario, no dejes que nadie te opaque, y sé que a veces lloras pq no te gustan aspectos de tu vida, pero amor, yo confio en que vos puedes, confio en vos, confio en que con cada cosa que se te ponga en frente la vas a solucionar, eres muy valiente, y muy fuerte emocionalmente. si algún dia nos dejamos de amar, creeme que seguiré estando para tí, pase lo que pase, siempre serás mi princesa hermosa, si algun dia el mundo entero decide ponerse contra ti seré el unico que te apoye, te amodoro.</p>
+
+        <a href="spotify:playlist:7Comopyo9M4z8lzdhNFDPm">el que no le da click aca es playo</a>
+       </div>
+
+
+
+
+
+
+
+
+
+    <script>
+          // Función para generar un emoji de corazón aleatorio
+        function getRandomHeartEmoji() {
+            const heartEmojis = ["❤️", "💓", "💕", "💖", "💗", "💘", "💝"];
+            const randomIndex = Math.floor(Math.random() * heartEmojis.length);
+            return heartEmojis[randomIndex];
+        }
+
+
+        function mostrarCombinacion() {
+            const emojiContainer = document.querySelector("a")
+            let combinacion = "";
+
+            for (let i = 0; i < 5; i++) {
+                combinacion += getRandomHeartEmoji();
+            }
+
+            emojiContainer.textContent = `el que no le da click aca es playo ${combinacion}`;
+        }
+
+
+        function mostrarMensaje() {
+            var mensaje = document.getElementById("mensaje");
+            if (mensaje.style.display === "none") {
+                mensaje.style.display = "block";
+            } else {
+                mensaje.style.display = "none";
+            }
+            var button = document.getElementById("emoji");
+            button.style.display='none'
+            setInterval(     mostrarCombinacion,1300)
+        }
+    </script>
+
+</body>
+</html>
