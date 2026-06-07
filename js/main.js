@@ -214,10 +214,17 @@ window.links_window = function () {
 
 // === ventana "sobre mí" ===
 window.about_window1 = function () {
-  window.aboutwindow = new Window(doc, "✦ sobre mí", getcenter(), 900, 0, [
+  const mobile = window.innerWidth <= 1024 || 'ontouchstart' in window;
+  const frameSize = mobile ? 120 : 200;
+  const pfpSize = mobile ? 80 : 135;
+  const pfpTop = mobile ? '17px' : '28px';
+  const pfpLeft = mobile ? '22px' : '36px';
+  const winWidth = mobile ? Math.min(window.innerWidth - 20, 520) : 900;
+
+  window.aboutwindow = new Window(doc, "✦ sobre mí", getcenter(), winWidth, 0, [
     new e("div")
       .class("unselectable")
-      .style({ position: "relative", "margin-bottom": "8px" })
+      .style({ position: "relative", "margin-bottom": "8px", "flex-shrink": "0" })
       .appendMany(
         new e("img")
           .attr({
@@ -227,18 +234,18 @@ window.about_window1 = function () {
           .class("unselectable")
           .style({
             position: "relative",
-            height: "200px",
-            width: "200px",
+            height: frameSize + "px",
+            width: frameSize + "px",
             "z-index": 1,
           }),
         new e("img")
           .attr({ draggable: "false", src: "/js/default.png" })
           .style({
             position: "absolute",
-            height: "135px",
-            width: "135px",
-            top: "28px",
-            left: "36px",
+            height: pfpSize + "px",
+            width: pfpSize + "px",
+            top: pfpTop,
+            left: pfpLeft,
             "z-index": 2,
           }),
       ),
@@ -305,6 +312,13 @@ window.app1 = new ProfilePicture(
       (thas) => {
         thas.close();
         window.document.body.classList.toggle("active");
+        // tooltip de drag, aparece abajo a la izquierda y se va solo
+        setTimeout(() => {
+          const tip = new ErrorWindow(doc, "💡 tip", [120, window.innerHeight - 80], 260, 0, [
+            new e("p").text("podés arrastrar las ventanas :p").style({ margin: "0", 'font-size': '0.95em' }),
+          ]);
+          setTimeout(() => tip.close(), 4000);
+        }, 400);
         setTimeout(window.about_window1, 1500);
       },
     );
