@@ -4,7 +4,10 @@
   <head>
     <meta charset="UTF-8" />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0"
+    />
     <title>pgbito webpage</title>
 
     <link rel="stylesheet" href="https://unpkg.com/7.css" />
@@ -259,51 +262,169 @@
       }
 
       /* === responsive móvil/tablet === */
-      @media (max-width: 768px) {
-        /* el body ocupa toda la pantalla sin overflow horizontal */
+      @media (max-width: 1024px) {
         body {
           width: 100vw;
           height: 100vh;
         }
-        /* las ventanas tipo Window no sobresalen del ancho */
         .window.glass {
-          max-width: calc(100vw - 16px) !important;
+          max-width: calc(100vw - 12px) !important;
           box-sizing: border-box;
         }
-        /* el contenido interno de las ventanas se adapta */
         .window-body {
-          max-width: calc(100vw - 16px) !important;
+          max-width: calc(100vw - 12px) !important;
           min-width: unset !important;
           width: 100% !important;
-          overflow-x: auto;
+          flex-wrap: wrap;
+          overflow-x: hidden;
+          overflow-y: auto;
+          max-height: 82vh;
           box-sizing: border-box;
+          padding: 10px !important;
+          gap: 10px;
+          align-items: flex-start !important;
         }
-        /* ventana winwin fija */
         .winwin {
-          width: calc(100vw - 16px);
-          max-width: calc(100vw - 16px);
+          width: calc(100vw - 12px);
+          max-width: calc(100vw - 12px);
         }
-        /* about y links content se adaptan */
+        /* about-content tamaño intermedio */
         .about-content {
-          max-width: 100%;
+          max-width: calc(100% - 140px);
+          min-width: 180px;
+          flex: 1;
+          padding: 2px 10px;
         }
+        .about-title {
+          font-size: 1.7em;
+          margin-bottom: 6px;
+        }
+        .about-content p {
+          font-size: 1em;
+          margin-bottom: 8px;
+          line-height: 1.45;
+        }
+        /* links */
         .links-content {
           width: 100%;
+          padding: 8px 10px;
         }
-        /* scrobbles más pequeños en móvil */
+        .links-section-title {
+          font-size: 1.1em !important;
+        }
+        /* scrobbles tamaño intermedio */
         .scrobble-icon {
           width: 80px;
         }
         .scrobble-icon-img,
         .scrobble-icon-noimg {
-          width: 60px;
-          height: 60px;
+          width: 64px;
+          height: 64px;
         }
       }
     </style>
   </head>
   <body>
     <div id="screen" class="has-scrollbar"></div>
+
+    <!-- botón landscape/fullscreen solo en móvil -->
+    <!-- ventanita de detección móvil -->
+    <div id="mobile-detect-win" class="window glass active unselectable" style="
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 99999;
+      width: 280px;
+    ">
+      <div class="title-bar">
+        <div class="title-bar-text">📱 dispositivo detectado</div>
+        <div class="title-bar-controls">
+          <button aria-label="Close" onclick="document.getElementById('mobile-detect-win').style.display='none'"></button>
+        </div>
+      </div>
+      <div class="window-body has-space" style="flex-direction: column; gap: 10px; padding: 12px;">
+        <p style="margin: 0; font-size: 0.9em; line-height: 1.5;">se ha detectado un teléfono celular. para una mejor experiencia, se recomienda ver la página en pantalla completa.</p>
+        <div style="display: flex; gap: 6px; justify-content: flex-end;">
+          <button onclick="enterMobileMode()">⛶ pantalla completa</button>
+          <button onclick="document.getElementById('mobile-detect-win').style.display='none'">cerrar</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // bloquear zoom por pellizco (2+ dedos)
+      document.addEventListener(
+        "touchstart",
+        function (e) {
+          if (e.touches.length > 1) e.preventDefault();
+        },
+        { passive: false },
+      );
+      document.addEventListener(
+        "touchmove",
+        function (e) {
+          if (e.touches.length > 1) e.preventDefault();
+        },
+        { passive: false },
+      );
+
+      // mostrar ventanita solo si es móvil/tablet
+      function isMobile() {
+        return window.innerWidth <= 1024 || "ontouchstart" in window;
+      }
+      if (isMobile()) {
+        document.getElementById("mobile-detect-win").style.display = "block";
+      }
+
+      // recentrar el icono de pgbito y ventanas abiertas al cambiar tamaño
+      function recentrarIcono() {
+        // esperar un frame pa que el browser actualice innerWidth/innerHeight
+        requestAnimationFrame(() => {
+          const cx = window.innerWidth / 2;
+          const cy = window.innerHeight / 2;
+          // buscar el ProfilePicture por su id (win-pgbito)
+          const iconEl = document.getElementById('win-pgbito ');
+          if (iconEl) {
+            iconEl.style.left = cx + 'px';
+            iconEl.style.top = cy + 'px';
+          }
+        });
+      }
+
+      // entrar en landscape + fullscreen
+      async function enterMobileMode() {
+        document.getElementById("mobile-detect-win").style.display = "none";
+        try {
+          const el = document.documentElement;
+          if (el.requestFullscreen) await el.requestFullscreen();
+          else if (el.webkitRequestFullscreen)
+            await el.webkitRequestFullscreen();
+        } catch (e) {
+          console.warn("fullscreen no disponible:", e);
+        }
+        try {
+          if (screen.orientation && screen.orientation.lock) {
+            await screen.orientation.lock("landscape");
+          }
+        } catch (e) {
+          console.warn("orientation lock no disponible:", e);
+        }
+        // esperar a que la orientacion y el fullscreen terminen de acomodarse
+        setTimeout(recentrarIcono, 300);
+      }
+
+      // tambien recentrar si cambia el tamaño de ventana en general
+      window.addEventListener('resize', recentrarIcono);
+
+      // si salen de fullscreen, volver a mostrar la ventanita
+      document.addEventListener("fullscreenchange", function () {
+        if (!document.fullscreenElement && isMobile()) {
+          document.getElementById("mobile-detect-win").style.display = "block";
+        }
+      });
+    </script>
 
     <!--  <div class="window glass active unselectable draggable winwin">
       <div class="title-bar" id="draggableheader">
