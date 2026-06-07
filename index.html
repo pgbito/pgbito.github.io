@@ -3,18 +3,15 @@
   <!-- https://www.deviantart.com/vinis13/art/Vini-Shield-an-Alerts-Icons-147160014 -->
   <head>
     <meta charset="UTF-8" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="connect-src 'self' data: blob: https://ws.audioscrobbler.com;"
-    />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>pgbito webpage</title>
 
     <link rel="stylesheet" href="https://unpkg.com/7.css" />
     <!--<link rel="stylesheet" href="/js/win7.css" />-->
 
-    <script type="module" src="./js/windower.js"></script>
-    <script type="module" src="./js/main.js"></script>
+    <script type="module" src="/js/windower.js"></script>
+    <script type="module" src="/js/main.js"></script>
     <style>
       body {
         position: absolute;
@@ -45,7 +42,7 @@
         padding: 0;
         top: 0;
         left: 0;
-        background-image: url("https://raw.githubusercontent.com/pgbito/pgbito.github.io/refs/heads/main/js/bak.jpg");
+        background-image: url("https://raw.githubusercontent.com/pgbito/pgbito.github.io/refs/heads/main/js/login.png");
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
@@ -250,7 +247,7 @@
         content: "";
         position: fixed;
         inset: 0;
-        background-image: url("https://raw.githubusercontent.com/pgbito/pgbito.github.io/refs/heads/main/js/login.png");
+        background-image: url("https://raw.githubusercontent.com/pgbito/pgbito.github.io/refs/heads/main/js/bak.jpg");
         background-size: cover;
         background-position: center;
         opacity: 0;
@@ -259,6 +256,49 @@
       /* estado "after" */
       body.active::before {
         opacity: 1;
+      }
+
+      /* === responsive móvil/tablet === */
+      @media (max-width: 768px) {
+        /* el body ocupa toda la pantalla sin overflow horizontal */
+        body {
+          width: 100vw;
+          height: 100vh;
+        }
+        /* las ventanas tipo Window no sobresalen del ancho */
+        .window.glass {
+          max-width: calc(100vw - 16px) !important;
+          box-sizing: border-box;
+        }
+        /* el contenido interno de las ventanas se adapta */
+        .window-body {
+          max-width: calc(100vw - 16px) !important;
+          min-width: unset !important;
+          width: 100% !important;
+          overflow-x: auto;
+          box-sizing: border-box;
+        }
+        /* ventana winwin fija */
+        .winwin {
+          width: calc(100vw - 16px);
+          max-width: calc(100vw - 16px);
+        }
+        /* about y links content se adaptan */
+        .about-content {
+          max-width: 100%;
+        }
+        .links-content {
+          width: 100%;
+        }
+        /* scrobbles más pequeños en móvil */
+        .scrobble-icon {
+          width: 80px;
+        }
+        .scrobble-icon-img,
+        .scrobble-icon-noimg {
+          width: 60px;
+          height: 60px;
+        }
       }
     </style>
   </head>
