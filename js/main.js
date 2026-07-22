@@ -252,17 +252,17 @@ window.about_window1 = function () {
     new e("div").class("about-content").appendMany(
       new e("h2").class("about-title").text("✦ sobre mí"),
       new e("p").text(
-        "hola! soy pgbito ✦ tengo 18 años y vivo en costa rica. " +
+        "hola! soy pablo ✦ tengo 18 años y vivo en costa rica. " +
           "acá planeo poner cosas interesantes :p",
       ),
       new e("p").text(
-        "me gusta la electrónica, la música, programar cosas random " + ":v",
+        "me gusta la electrónica, la música, programar cosas random, el gimnasio y más " + ":v",
       ),
 
       new e("button")
         .class("about-more-btn")
         .attr({ onclick: "window.links_window()" })
-        .text("🎧 mis links & música →"),
+        .text("mis links & lo que escucho →"),
     ),
   ]);
 };
