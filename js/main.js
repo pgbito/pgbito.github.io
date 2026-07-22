@@ -247,13 +247,16 @@ window.about_window1 = function () {
           }),
       ),
     new e("div").class("about-content").appendMany(
-      new e("h2").class("about-title").text("🌟 sobre mí"),
+      new e("h2").class("about-title").text("sobre mí"),
       new e("p").text(
         "hola! soy pablo, tengo 18 años y vivo en costa rica. " +
           "acá planeo poner cosas interesantes :p",
       ),
       new e("p").text(
         "me gusta la electrónica, la música, programar cosas random, el gimnasio y más " + ":v",
+      ),
+      new e("p").text(
+        "página programada por mí con ayuda del framework Win7.CSS" + ":v",
       ),
 
       new e("button")
