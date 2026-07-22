@@ -128,7 +128,7 @@ window.links_window = function () {
           new e("a")
             .class("link-chip")
             .attr({
-              href: "https://open.spotify.com/user/TU_USUARIO_SPOTIFY",
+              href: "https://open.spotify.com/user/pw1ipgszl58ix09fb4b3ufcma?si=a4b986e859854487",
               target: "_blank",
             })
             .text("🟢 spotify"),
