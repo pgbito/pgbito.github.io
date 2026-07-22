@@ -124,10 +124,7 @@ window.links_window = function () {
           .text("🔗 mis links")
           .style({ "font-size": "2em" }),
         new e("div").class("links-row").appendMany(
-          new e("a")
-            .class("link-chip")
-            .attr({ href: "https://github.com/pgbito", target: "_blank" })
-            .text("⬛ github"),
+         
           new e("a")
             .class("link-chip")
             .attr({
@@ -250,9 +247,9 @@ window.about_window1 = function () {
           }),
       ),
     new e("div").class("about-content").appendMany(
-      new e("h2").class("about-title").text("✦ sobre mí"),
+      new e("h2").class("about-title").text("🌟 sobre mí"),
       new e("p").text(
-        "hola! soy pablo ✦ tengo 18 años y vivo en costa rica. " +
+        "hola! soy pablo, tengo 18 años y vivo en costa rica. " +
           "acá planeo poner cosas interesantes :p",
       ),
       new e("p").text(
@@ -289,7 +286,12 @@ window.app1win = undefined;
     ]);
   },
 ); */
-
+setTimeout(() => {
+          const tip = new ErrorWindow(doc, "💡 tip", [120, window.innerHeight - 80], 260, 0, [
+            new e("p").text("tocá el usuario :p").style({ margin: "0", 'font-size': '0.95em' }),
+          ]);
+          setTimeout(() => tip.close(), 4000);
+        },100);
 window.app1 = new ProfilePicture(
   doc,
   "pgbito ",
