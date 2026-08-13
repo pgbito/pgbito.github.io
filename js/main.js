@@ -32,7 +32,7 @@ class SoundBoard {
   }
   constructor() {
     this.loginaudio = this.preload_audio(
-      "https://github.com/pgbito/pgbito.github.io/raw/refs/heads/main/js/startup7.mp3",
+      "https://raw.githubusercontent.com/pgbito/pgbito.github.io/refs/heads/main/js/startup7.mp3",
     );
     /*this.erroraudio = this.preload_audio(
       "https://www.myinstants.com/media/sounds/erro-win-7_3OFHeWK.mp3",
