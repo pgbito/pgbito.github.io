@@ -131,7 +131,7 @@ async function requestChart(username, datatype, period, height = 3, width = 3) {
         throw new HTTPError(400, "Invalid datatype");
     }
 
-    const url = "http://ws.audioscrobbler.com/2.0/";
+    const url = "https://ws.audioscrobbler.com/2.0/";
     const content = await apiFetch(url, {
         params: {
             user: username,
