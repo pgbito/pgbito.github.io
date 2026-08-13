@@ -100,7 +100,7 @@ window.errorbox = function (etitle, ...args) {
   ]);
 };
 
-// === ventana "mis links + música" ===
+
 window.links_window = function () {
   if (window.linkswin) {
     window.linkswin.focusWindow();
@@ -139,6 +139,10 @@ window.links_window = function () {
               target: "_blank",
             })
             .text("🔴 last.fm"),
+          new e("a")
+            .class("link-chip")
+            .attr({ onclick: "window.chart_window()" })
+            .text("🖼️ generar chart"),
         ),
         new e("hr").style({ margin: "10px 0", opacity: "0.3" }),
         new e("p")
@@ -149,7 +153,7 @@ window.links_window = function () {
       ),
   ]);
 
-  // traer al frente inmediatamente al abrir
+
   window.linkswin.focusWindow();
 
   const origClose = window.linkswin.close.bind(window.linkswin);
@@ -209,7 +213,7 @@ window.links_window = function () {
     });
 };
 
-// === ventana "sobre mí" ===
+
 window.about_window1 = function () {
   const mobile = window.innerWidth <= 1024 || 'ontouchstart' in window;
   const frameSize = mobile ? 120 : 200;
