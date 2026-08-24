@@ -1,360 +1,324 @@
-import { ErrorWindow, Window, Html as e, getcenter } from "./windower.js";
+import {
+  App,
+  ErrorWindow,
+  LoadingText,
+  Window,
+  ProfilePicture,
+  Html as e,
+  getcenter,
+} from "./windower.js";
+
 const doc = document.getElementById("screen");
+const winframe =
+  "https://raw.githubusercontent.com/pgbito/pgbito.github.io/refs/heads/main/js/frame.png";
+// === CONFIGURACIÓN ===
+const LASTFM_API_KEY = "fe91cc33c93ea3c390251067966de1ba";
+const LASTFM_USER = "pgbito";
+
 class SoundBoard {
   preload_audio(url) {
-    // diay una forma bastante primitiva de precargar los hijueputas audios
     let _ = new Audio(url);
+
     _.preload = "auto";
-    _.volume = 1e-6;
+    _.volume = 0;
     _.play()
-      .catch((e) => {})
-      .finally((_) => {
-        this.loginaudio.volume = 1;
+      .catch((e) => {
+        console.error(e);
+      })
+      .finally(() => {
+        _.volume = 1;
       });
     return _;
   }
   constructor() {
     this.loginaudio = this.preload_audio(
-      //"https://ia600100.us.archive.org/3/items/MicrosoftWindows7StartupSound/Microsoft%20Windows%207%20Startup%20Sound.mp3"
-      "/js/startup7.mp3"
+      "https://raw.githubusercontent.com/pgbito/pgbito.github.io/refs/heads/main/js/startup7-48k-mono.mp3",
     );
-   
+    /*this.erroraudio = this.preload_audio(
+      "https://www.myinstants.com/media/sounds/erro-win-7_3OFHeWK.mp3",
+    );*/
   }
 }
 const sb = new SoundBoard();
 
 window.byid = document.getElementById;
+
 window.displayPfpMenu = function () {
   var imgselector = document.getElementById("imgselect");
   let file;
   var input = document.createElement("input");
   input.type = "file";
   input.accept = "image/*";
-
   input.onchange = (e) => {
     file = e.target.files[0];
-
-    // Crear un FileReader para leer el archivo
     const reader = new FileReader();
     const img = new Image();
     reader.onload = function (event) {
       img.onload = function () {
-        // Crear un canvas para recortar la imagen
         const canvas = document.createElement("canvas");
-
-        // Definir el tamaño cuadrado (el lado más corto de la imagen)
         const side = Math.min(img.width, img.height);
         canvas.width = side;
         canvas.height = side;
-
         const ctx = canvas.getContext("2d");
-
-        // Dibujar la imagen recortada en el canvas
         ctx.drawImage(
           img,
-          (img.width - side) / 2, // Centrar la imagen en el eje X
-          (img.height - side) / 2, // Centrar la imagen en el eje Y
-          side, // Ancho a recortar
-          side, // Alto a recortar
-          0, // Coordenada X del canvas
-          0, // Coordenada Y del canvas
-          side, // Ancho del canvas
-          side // Alto del canvas
+          (img.width - side) / 2,
+          (img.height - side) / 2,
+          side,
+          side,
+          0,
+          0,
+          side,
+          side,
         );
-
-        // Convertir el canvas a blob y crear un nuevo File
-        canvas.toBlob(function (blob) {
-          const croppedFile = new File([blob], file.name, {
-            type: file.type,
-            lastModified: Date.now(),
-          });
-          imgselector.src = URL.createObjectURL(croppedFile);
-          // Aquí puedes hacer lo que quieras con el nuevo File (croppedFile)
-          console.log(croppedFile); // Mostramos el archivo recortado
-        }, file.type);
+        canvas.toBlob(
+          function (blob) {
+            const croppedFile = new File([blob], file.name, {
+              type: file.type,
+              lastModified: Date.now(),
+            });
+            imgselector.src = URL.createObjectURL(croppedFile);
+          },
+          file.type,
+          0.8,
+        );
       };
-
       img.src = event.target.result;
     };
-
     reader.readAsDataURL(file);
   };
-
   input.click();
 };
-const progress_bar = new e("div")
-  .class("animate")
-  .attr({ role: "progressbar" })
-  .append(new e("div").id("progress_holder").style({ width: "0%" }));
-window.onregister = function () {
-  var usrname = document.getElementById("correo-register");
-  var passwd = document.getElementById("password-register");
-  superagent
-    .post("/register")
-    .send({ email: usrname.value, password: passwd.value }) // sends a JSON post body
 
-    .set("accept", "json")
-    .end(function (err, res) {
-      if (res.status == 200) {
-        alert("Has sido registrado!");
-
-        window.registerwin.close();
-      } else {
-        alert("Error al registrarte, " + res.body);
-      }
-    });
-};
-window.login_window = function () {
-  window.loginwindow = new Window(
-    doc,
-    "inicia sesión >. <",
-    getcenter(),
-    900,
-    0,
-    [
-      new e("div")
-        .class("unselectable")
-        .style({ position: "relative" })
-        .appendMany(
-          new e("img")
-            .attr({
-              draggable: "false",
-              src: "/js/frame.png",
-            })
-            .class("unselectable")
-            .style({
-              position: "relative",
-              height: "200px",
-              width: "200px",
-              "z-index": 1,
-            }),
-          new e("img")
-            .attr({
-              draggable: "false",
-              src: "/js/default.png",
-            })
-            .style({
-              position: "absolute",
-              height: "135px",
-              width: "135px",
-
-              top: "28px",
-              left: "36px",
-
-              "z-index": 2,
-            })
-        ),
-
-      new e("div").style({ "flex-direction": "column" }).appendMany(
-        new e("p").text(
-          "hola, bienvenido a mi página web, por favor inicia sesión."
-        ),
-        new e("input")
-          .id("correo-login")
-          .attr({ type: "email", placeholder: "pon tu correo :)" }),
-        new e("br"),
-        new e("input")
-          .id("password-login")
-          .attr({ type: "password", placeholder: "tu contraseña" }),
-        new e("br"),
-
-        new e("a")
-          .attr({ href: "http://github.com/pgbito" })
-          .text("olvidaste tu contraseña?"),
-        new e("a")
-          .attr({
-            onclick: "window.registerwindow()",
-          })
-          .text("registrate"),
-        new e("br"),
-        new e("button")
-          .id("login")
-          .attr({ onclick: "window.onlogin()" })
-          .text("iniciar sesión 😓")
-      ),
-    ]
-  );
-};
 window.errorbox = function (etitle, ...args) {
-  return new ErrorWindow(
-    doc,
-    `❌ ${etitle}`,
-    getcenter(),
-    600,
-    0,
-
-    [
-      new e("img").attr({
-        src: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/f342609c-7612-4fa2-94f3-84e06e03c28c/d2mwn6u-209c69dd-29c4-4524-8c5e-ecc3b71acf21.jpg/v1/fill/w_256,h_256,q_75,strp/windows_vista_error_icon_by_rukiaxichigo15_d2mwn6u-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MjU2IiwicGF0aCI6IlwvZlwvZjM0MjYwOWMtNzYxMi00ZmEyLTk0ZjMtODRlMDZlMDNjMjhjXC9kMm13bjZ1LTIwOWM2OWRkLTI5YzQtNDUyNC04YzVlLWVjYzNiNzFhY2YyMS5qcGciLCJ3aWR0aCI6Ijw9MjU2In1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.sKzomEZLECV2DMorjcLQQOE8mzuutJwtQv1JJVg-1H8",
-        width: "35px",
-        height: "35px",
-      }),
-      ...args.map((arg) => new e("p").text(arg).append(new e("br"))),
-    ]
-  );
+  return new ErrorWindow(doc, `❌ ${etitle}`, getcenter(), 600, 0, [
+    new e("img").attr({
+      width: "35px",
+      height: "35px",
+    }),
+    ...args.map((arg) => new e("p").text(arg).append(new e("br"))),
+  ]);
 };
-window.onlogin = function () {
-  var usrname = document.getElementById("correo-login");
-  var passwd = document.getElementById("password-login");
-  superagent
-    .post("/login")
-    .send({ email: usrname.value, password: passwd.value }) // sends a JSON post body
 
-    .set("accept", "json")
-    .end(function (err, res) {
-      if (res.status == 200) {
-        window.loginwindow.close();
-        sb.loginaudio.play().catch((e) => {
-          console.log(e);
-        });
-        setTimeout((_) => {
-          new Window(doc, "página principal", getcenter(), 900, 0, [
-            new e("h1").text("holi"),
-          ]);
-        }, 1500);
-      } else {
-        alert("Error iniciando sesión:", res.body);
+
+window.links_window = function () {
+  if (window.linkswin) {
+    window.linkswin.focusWindow();
+    return;
+  }
+
+  const scrobblesContainer = new e("div").id("scrobbles-list");
+  const loadingText = new e("p")
+    .id("scrobbles-loading")
+    .style({ color: "#888", "font-size": "0.92em", "font-style": "italic" })
+    .text("cargando...");
+  scrobblesContainer.append(loadingText);
+
+  window.linkswin = new Window(doc, "🎵 links & música", getcenter(), 800, 0, [
+    new e("div")
+      .class("links-content")
+      .style({ "align-self": "stretch", width: "100%", "z-index": 4 })
+      .appendMany(
+        new e("p")
+          .class("links-section-title")
+          .text("🔗 mis links")
+          .style({ "font-size": "2em" }),
+        new e("div").class("links-row").appendMany(
+
+          new e("a")
+            .class("link-chip")
+            .attr({
+              href: "https://open.spotify.com/user/pw1ipgszl58ix09fb4b3ufcma?si=a4b986e859854487",
+              target: "_blank",
+            })
+            .text("🟢 spotify"),
+          new e("a")
+            .class("link-chip")
+            .attr({
+              href: `https://www.last.fm/user/${LASTFM_USER}`,
+              target: "_blank",
+            })
+            .text("🔴 last.fm"),
+          new e("a")
+            .class("link-chip")
+            .attr({ onclick: "window.chart_window()" })
+            .text("🖼️ generar chart"),
+        ),
+        new e("hr").style({ margin: "10px 0", opacity: "0.3" }),
+        new e("p")
+          .class("links-section-title")
+          .text("🎧 mis últimos escuchados :p")
+          .style({ "font-size": "2em" }),
+        scrobblesContainer,
+      ),
+  ]);
+
+
+  window.linkswin.focusWindow();
+
+  const origClose = window.linkswin.close.bind(window.linkswin);
+  window.linkswin.close = function () {
+    window.linkswin = undefined;
+    origClose();
+  };
+
+  fetch(
+    `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LASTFM_USER}&api_key=${LASTFM_API_KEY}&format=json&limit=12`,
+  )
+    .then((r) => r.json())
+    .then((data) => {
+      const loading = document.getElementById("scrobbles-loading");
+      if (loading) loading.remove();
+
+      const tracks = data?.recenttracks?.track;
+      if (!tracks || !tracks.length) {
+        document.getElementById("scrobbles-list")?.appendChild(
+          Object.assign(document.createElement("p"), {
+            textContent: "no se encontraron tracks :(",
+            style: "color:#888; font-size:0.9em;",
+          }),
+        );
+        return;
       }
+
+      const list = document.getElementById("scrobbles-list");
+      if (!list) return;
+
+      tracks.forEach((track) => {
+        const isNowPlaying = track["@attr"]?.nowplaying === "true";
+        const artist = track.artist?.["#text"] || "?";
+        const name = track.name || "?";
+        const img = track.image?.[2]?.["#text"];
+
+        const icon = document.createElement("div");
+        icon.className =
+          "scrobble-icon" + (isNowPlaying ? " scrobble-nowplaying" : "");
+        icon.innerHTML = `
+          ${img
+            ? `<img src="${img}" class="scrobble-icon-img" draggable="false"/>`
+            : `<div class="scrobble-icon-noimg">♪</div>`
+          }
+          <span class="scrobble-icon-name">${name}</span>
+          <span class="scrobble-icon-artist">${artist}</span>
+          ${isNowPlaying ? `<span class="scrobble-badge">▶ now</span>` : ""}
+        `;
+        list.appendChild(icon);
+      });
+    })
+    .catch((err) => {
+      const loading = document.getElementById("scrobbles-loading");
+      if (loading) loading.textContent = "error cargando last.fm 😓";
+      console.error("lastfm error:", err);
     });
 };
-window.registerwindow = function () {
-  window.registerwin = new Window(doc, "registrate :p", getcenter(), 900, 0, [
+
+
+window.about_window1 = function () {
+  const mobile = window.innerWidth <= 1024 || 'ontouchstart' in window;
+  const frameSize = mobile ? 120 : 200;
+  const pfpSize = mobile ? 80 : 135;
+  const pfpTop = mobile ? '17px' : '28px';
+  const pfpLeft = mobile ? '22px' : '36px';
+  const winWidth = mobile ? Math.min(window.innerWidth - 20, 520) : 900;
+
+  window.aboutwindow = new Window(doc, "✦ sobre mí", getcenter(), winWidth, 0, [
     new e("div")
       .class("unselectable")
-      .style({ position: "relative" })
+      .style({ position: "relative", "margin-bottom": "8px", "flex-shrink": "0" })
       .appendMany(
         new e("img")
           .attr({
             draggable: "false",
-            src: "/js/frame.png",
+            src: winframe,
           })
           .class("unselectable")
           .style({
             position: "relative",
-            height: "200px",
-            width: "200px",
+            height: frameSize + "px",
+            width: frameSize + "px",
             "z-index": 1,
           }),
         new e("img")
-          .attr({
-            draggable: "false",
-            src: "/js/default.png",
-            onclick: "window.displayPfpMenu()",
-          })
-          .id("imgselect")
+          .attr({ draggable: "false", src: "/js/default.png" })
           .style({
             position: "absolute",
-            height: "135px",
-            width: "135px",
-
-            top: "28px",
-            left: "36px",
-
+            height: pfpSize + "px",
+            width: pfpSize + "px",
+            top: pfpTop,
+            left: pfpLeft,
             "z-index": 2,
           }),
-        new e("div")
-          .id("hint-pfp")
-          .attr({ role: "tooltip" })
-          .text("acá podés subir tu pfp 💕🙊")
-          .style({ "padding-left": "20px", display: "none" })
-          .append(
-            new e("script").text(`
-            
-            setTimeout((_) => {
-  document.getElementById("hint-pfp").style.display = "";
-  setTimeout(
-    (_) => (document.getElementById("hint-pfp").style.display = "none")
-  ,9000);
-}, 3000);
-
-            `)
-          )
+      ),
+    new e("div").class("about-content").appendMany(
+      new e("h2").class("about-title").text("sobre mí"),
+      new e("p").text(
+        "hola! soy pablo, tengo 18 años y vivo en costa rica. " +
+        "acá planeo poner cosas interesantes :p",
+      ),
+      new e("p").text(
+        "me gusta la electrónica, la música, programar cosas random, el gimnasio y más " + ":v",
+      ),
+      new e("p").text(
+        "página programada por mí con ayuda del framework Win7.CSS" + ":v",
       ),
 
-    new e("div").style({ "flex-direction": "column" }).appendMany(
-      new e("h3").text(
-        "hola, bienvenido a mi página web, por favor registrate."
-      ),
-      new e("input")
-        .id("correo-register")
-        .attr({ type: "email", placeholder: "pon tu correo :)" }),
-      new e("br"),
-      new e("input")
-        .id("password-register")
-        .attr({ type: "password", placeholder: "tu contraseña" }),
-      new e("br"),
-
-      new e("br"),
       new e("button")
-        .id("register")
-        .text("registrame!")
-        .attr({ onclick: "window.onregister()" })
+        .class("about-more-btn")
+        .attr({ onclick: "window.links_window()" })
+        .text("mis links & lo que escucho →"),
     ),
   ]);
 };
 
+window.app1win = undefined;
+
+setTimeout(() => {
+  const tip = new ErrorWindow(doc, "💡 tip", [120, window.innerHeight - 80], 260, 0, [
+    new e("p").text("tocá el usuario :p").style({ margin: "0", 'font-size': '0.95em' }),
+  ]);
+  setTimeout(() => tip.close(), 4000);
+}, 100);
+window.app1 = new ProfilePicture(
+  doc,
+  "pgbito ",
+  getcenter(),
+  140,
+  140,
+  "/js/default.png",
+  winframe,
+  function (thus) {
+    thus.close();
+    sb.loginaudio.play().catch((e) => {
+      console.error(e);
+    });
+    window.loadingText = new LoadingText(
+      doc,
+      "cargando...",
+      getcenter(),
+
+      3000,
+      (thas) => {
+        thas.close();
+        window.document.body.classList.toggle("active");
+        // tooltip de drag, aparece abajo a la izquierda y se va solo
+        setTimeout(() => {
+          const tip = new ErrorWindow(doc, "💡 tip", [120, window.innerHeight - 80], 260, 0, [
+            new e("p").text("podés arrastrar las ventanas :p").style({ margin: "0", 'font-size': '0.95em' }),
+          ]);
+          setTimeout(() => tip.close(), 4000);
+        }, 400);
+        setTimeout(window.about_window1, 1500);
+      },
+    );
+  },
+);
+
 var progress = 0;
 var progress_holder = document.getElementById("progress_holder");
-
 if (progress_holder) {
   let int = setInterval((_) => {
     progress += 0.1;
-    if (progress >= 100) {
-      clearInterval(int);
-    }
+    if (progress >= 100) clearInterval(int);
     progress_holder.style.width = `${progress}%`;
   }, 10);
 }
-window.login_window();
-
-/* var mousePosition;
-     var offset = [0, 0];
-    var div;
-    var isDown = false;
-     div = document.getElementById("draggableheader");
-
-    Array.from(document.getElementsByClassName("draggable")).forEach(dragElement);
-
-    function dragElement(elmnt) {
-      var pos1 = 0,
-        pos2 = 0,
-        pos3 = 0,
-        pos4 = 0;
-      if (document.getElementById("draggableheader")) {
-        // if present, the header is where you move the DIV from:
-        document.getElementById("draggableheader").onmousedown = dragMouseDown;
-      } else {
-        // otherwise, move the DIV from anywhere inside the DIV:
-        elmnt.onmousedown = dragMouseDown;
-      }
-
-      function dragMouseDown(e) {
-        e = e || window.event;
-        e.preventDefault();
-        // get the mouse cursor position at startup:
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        document.onmouseup = closeDragElement;
-        // call a function whenever the cursor moves:
-        document.onmousemove = elementDrag;
-      }
-
-      function elementDrag(e) {
-        e = e || window.event;
-        e.preventDefault();
-        // calculate the new cursor position:
-        pos1 = pos3 - e.clientX;
-        pos2 = pos4 - e.clientY;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        // set the element's new position:
-        elmnt.style.top = elmnt.offsetTop - pos2 + "px";
-        elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
-      }
-
-      function closeDragElement() {
-        // stop moving when mouse button is released:
-        document.onmouseup = null;
-        document.onmousemove = null;
-      }
-    } */

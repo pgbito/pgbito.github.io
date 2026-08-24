@@ -1,35 +1,703 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <!-- https://www.deviantart.com/vinis13/art/Vini-Shield-an-Alerts-Icons-147160014 -->
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pgbito webpage</title>
-    <script src="/js/superagent_10_1_0.js"></script>
+<!-- https://www.deviantart.com/vinis13/art/Vini-Shield-an-Alerts-Icons-147160014 -->
 
-    <link rel="stylesheet" href="/js/win7.css" />
-    <link rel="stylesheet" href="./js/styles.css" />
-    <script type="module" src="./js/windower.js"></script>
-    <script type="module" src="./js/main.js"></script>
-  </head>
-  <body>
-    <div id="screen" class="has-scrollbar"></div>
-    <!-- <div class="window glass active unselectable draggable winwin">
-  <div class="title-bar" id="draggableheader">
-    <div class="title-bar-text">A glass window frame</div>
-    <div class="title-bar-controls">
-      <button aria-label="Minimize"></button>
-      <button aria-label="Close"></button>
+<head>
+  <meta charset="UTF-8" />
+
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0" />
+  <title>pgbito webpage</title>
+  <!-- precarga bak.jpg apenas arranca, para que esté lista cuando haga fade-in -->
+  <link rel="preload" as="image"
+    href="https://raw.githubusercontent.com/pgbito/pgbito.github.io/refs/heads/main/js/login.png" />
+  <link rel="stylesheet" href="https://unpkg.com/7.css@0.21.1/dist/7.css" />
+  <!--<link rel="stylesheet" href="/js/win7.css" />-->
+  <script type="module" src="/js/windower.js"></script>
+  <script type="module" src="/js/chart-generator.js"></script>
+  <script type="module" src="/js/chart-window.js"></script>
+  <script type="module" src="/js/main.js"></script>
+
+  <style>
+    body {
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .unselectable {
+      user-select: none;
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      -o-user-select: none;
+    }
+
+    .draggable {
+      position: absolute;
+    }
+
+    .winwin {
+      width: 550px;
+      max-width: 550px;
+    }
+
+    body {
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      top: 0;
+      left: 0;
+      background-image: url("https://raw.githubusercontent.com/pgbito/pgbito.github.io/refs/heads/main/js/login.png");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .unselectable {
+      user-select: none;
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      -o-user-select: none;
+    }
+
+    .draggable {
+      position: absolute;
+    }
+
+    .winwin {
+      width: 550px;
+      max-width: 550px;
+    }
+
+    /* === sobre mí window === */
+    .about-content {
+      flex-direction: column;
+      padding: 6px 12px;
+      max-width: 310px;
+    }
+
+    .about-title {
+      color: #29c9e0;
+      font-family: "Comic Sans MS", sans-serif;
+      font-size: 3em;
+      margin: 0 0 10px 0;
+      text-shadow: 0 0 10px rgba(41, 201, 224, 0.45);
+      letter-spacing: 0.5px;
+    }
+
+    .about-content p {
+      font-size: 1.5em;
+      line-height: 1.65;
+      margin: 0 0 12px 0;
+      color: #1a1a1a;
+    }
+
+    .about-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 4px;
+      margin-bottom: 12px;
+    }
+
+    .about-tag {
+      background: rgba(41, 201, 224, 0.12);
+      border: 1px solid rgba(41, 201, 224, 0.45);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 0.78em;
+      color: #0097a7;
+      cursor: default;
+    }
+
+    .about-more-btn {
+      margin-top: 4px;
+      width: 100%;
+      font-size: 0.95em;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+    }
+
+    /* === links & música window === */
+    .links-content {
+      flex-direction: column;
+      padding: 10px 16px;
+      width: 100%;
+      box-sizing: border-box;
+      align-self: stretch;
+    }
+
+    .links-section-title {
+      font-size: 1em;
+      font-weight: bold;
+      margin: 4px 0 8px 0;
+      color: #1a1a1a;
+    }
+
+    .links-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 4px;
+    }
+
+    .link-chip {
+      background: rgba(41, 201, 224, 0.1);
+      border: 1px solid rgba(41, 201, 224, 0.5);
+      border-radius: 20px;
+      padding: 5px 13px;
+      font-size: 0.9em;
+      color: #006e7f;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .link-chip:hover {
+      background: rgba(41, 201, 224, 0.28);
+    }
+
+    /* === scrobbles como iconos de escritorio === */
+    #scrobbles-list {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 10px;
+      width: 100%;
+      box-sizing: border-box;
+      scrollbar-width: thin;
+      scrollbar-color: #29c9e0 #e0e0e0;
+    }
+
+    #scrobbles-list::-webkit-scrollbar {
+      height: 10px;
+    }
+
+    #scrobbles-list::-webkit-scrollbar-track {
+      background: #e0e0e0;
+      border-radius: 4px;
+    }
+
+    #scrobbles-list::-webkit-scrollbar-thumb {
+      background: #29c9e0;
+      border-radius: 4px;
+    }
+
+    #scrobbles-list::-webkit-scrollbar-thumb:hover {
+      background: #00adc4;
+    }
+
+    /* cada iconito */
+    .scrobble-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100px;
+      flex-shrink: 0;
+      cursor: default;
+      padding: 7px 5px;
+      border-radius: 6px;
+      transition: background 0.12s;
+    }
+
+    .scrobble-icon:hover {
+      background: rgba(41, 201, 224, 0.15);
+    }
+
+    .scrobble-icon.scrobble-nowplaying {
+      background: rgba(41, 201, 224, 0.18);
+      outline: 1px solid rgba(41, 201, 224, 0.5);
+    }
+
+    .scrobble-icon-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 6px;
+      object-fit: cover;
+      box-shadow: 0 2px 7px rgba(0, 0, 0, 0.2);
+      margin-bottom: 7px;
+    }
+
+    .scrobble-icon-noimg {
+      width: 80px;
+      height: 80px;
+      border-radius: 6px;
+      background: #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8em;
+      color: #888;
+      margin-bottom: 7px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    }
+
+    .scrobble-icon-name {
+      font-size: 0.84em;
+      font-weight: bold;
+      color: #111;
+      text-align: center;
+      word-break: break-word;
+      line-height: 1.3;
+      max-height: 2.7em;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      width: 100%;
+    }
+
+    .scrobble-icon-artist {
+      font-size: 0.74em;
+      color: #555;
+      text-align: center;
+      margin-top: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+
+    .scrobble-badge {
+      font-size: 0.65em;
+      background: #29c9e0;
+      color: white;
+      border-radius: 10px;
+      padding: 2px 7px;
+      margin-top: 4px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("https://raw.githubusercontent.com/pgbito/pgbito.github.io/refs/heads/main/js/bak.jpg");
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    /* estado "after" */
+    body.active::before {
+      opacity: 1;
+    }
+
+    /* === responsive móvil/tablet === */
+    @media (max-width: 1024px) {
+      body {
+        width: 100vw;
+        height: 100vh;
+      }
+
+      .window.glass {
+        max-width: calc(100vw - 12px) !important;
+        box-sizing: border-box;
+      }
+
+      .window-body {
+        max-width: calc(100vw - 12px) !important;
+        min-width: unset !important;
+        width: 100% !important;
+        flex-wrap: wrap;
+        overflow-x: hidden;
+        overflow-y: auto;
+        max-height: 82vh;
+        box-sizing: border-box;
+        padding: 10px !important;
+        gap: 10px;
+        align-items: flex-start !important;
+      }
+
+      .winwin {
+        width: calc(100vw - 12px);
+        max-width: calc(100vw - 12px);
+      }
+
+      /* about-content tamaño intermedio */
+      .about-content {
+        max-width: calc(100% - 140px);
+        min-width: 180px;
+        flex: 1;
+        padding: 2px 10px;
+      }
+
+      .about-title {
+        font-size: 1.7em;
+        margin-bottom: 6px;
+      }
+
+      .about-content p {
+        font-size: 1em;
+        margin-bottom: 8px;
+        line-height: 1.45;
+      }
+
+      /* links */
+      .links-content {
+        width: 100%;
+        padding: 8px 10px;
+      }
+
+      .links-section-title {
+        font-size: 1.1em !important;
+      }
+
+      /* scrobbles tamaño intermedio */
+      .scrobble-icon {
+        width: 80px;
+      }
+
+      .scrobble-icon-img,
+      .scrobble-icon-noimg {
+        width: 64px;
+        height: 64px;
+      }
+    }
+
+    /* === taskbar win7 === */
+    #taskbar {
+      display: none;
+      /* Oculto hasta que esté activo */
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 40px;
+      background: rgba(30, 45, 65, 0.45);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.35);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 -2px 10px rgba(0, 0, 0, 0.6);
+      z-index: 999999;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    body.active #taskbar {
+      display: flex;
+    }
+
+    .start-button {
+      width: 54px;
+      height: 54px;
+      /* Start orb goes slightly above the taskbar in Win7 */
+      margin-top: -7px;
+      margin-left: 5px;
+      margin-right: 5px;
+      /* Using a generic SVG for the orb or a proxy to an image */
+      background: url('https://upload.wikimedia.org/wikipedia/commons/e/e4/Windows_logo_-_2002%E2%80%932012_%28multiblue%29.svg') no-repeat center center;
+      background-size: 38px;
+      cursor: pointer;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+      transition: filter 0.1s;
+    }
+
+    .start-button:hover {
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)) brightness(1.2);
+    }
+
+    .taskbar-apps {
+      display: flex;
+      flex: 1;
+      height: 100%;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .taskbar-icon {
+      width: 48px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 3px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .taskbar-icon img {
+      width: 28px;
+      height: 28px;
+      filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.4));
+    }
+
+    .taskbar-icon:hover {
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.15) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.3);
+    }
+
+    .taskbar-icon.active {
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.3) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.5);
+    }
+
+    .system-tray {
+      display: flex;
+      height: 100%;
+      align-items: center;
+    }
+
+    .tray-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 8px;
+      height: 100%;
+    }
+
+    .tray-icons span {
+      font-size: 16px;
+      color: white;
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+      cursor: pointer;
+    }
+
+    .tray-lang {
+      color: white;
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 11px;
+      padding: 0 6px;
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+      cursor: default;
+    }
+
+    .datetime {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: white;
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 11px;
+      text-align: center;
+      padding: 0 10px;
+      height: 100%;
+      cursor: pointer;
+      border: 1px solid transparent;
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+    }
+
+    .datetime:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .datetime .time {
+      margin-bottom: 2px;
+    }
+
+    .show-desktop {
+      width: 14px;
+      height: 100%;
+      border-left: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+    }
+
+    .show-desktop:hover {
+      background: rgba(255, 255, 255, 0.25);
+      box-shadow: inset 1px 0 3px rgba(255, 255, 255, 0.5);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="screen" class="has-scrollbar"></div>
+
+  <!-- Taskbar Win7 -->
+  <div id="taskbar" class="unselectable">
+    <div class="start-button">
+      <img
+        src="https://raw.githubusercontent.com/TheRealBYK/win7-start-orbs/df15b5112613c0034bcd069b58658e02215a617c/images/Start_button.svg"
+        style="width: 48px; height: 48px;" alt="">
+    </div>
+    <div class="taskbar-apps">
+      <div class="taskbar-icon active" onclick="if(window.about_window1) window.about_window1()">
+        <img src="/js/default.png" alt="Pgbito">
+      </div>
+      <div class="taskbar-icon" onclick="if(window.links_window) window.links_window()">
+        <svg xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px;" viewBox="0 0 496 512">
+          <path fill="#1ed760" d="M248 8C111.1 8 0 119.1 0 256s111.1 248 248 248 248-111.1 248-248S384.9 8 248 8Z" />
+          <path
+            d="M406.6 231.1c-5.2 0-8.4-1.3-12.9-3.9-71.2-42.5-198.5-52.7-280.9-29.7-3.6 1-8.1 2.6-12.9 2.6-13.2 0-23.3-10.3-23.3-23.6 0-13.6 8.4-21.3 17.4-23.9 35.2-10.3 74.6-15.2 117.5-15.2 73 0 149.5 15.2 205.4 47.8 7.8 4.5 12.9 10.7 12.9 22.6 0 13.6-11 23.3-23.2 23.3zm-31 76.2c-5.2 0-8.7-2.3-12.3-4.2-62.5-37-155.7-51.9-238.6-29.4-4.8 1.3-7.4 2.6-11.9 2.6-10.7 0-19.4-8.7-19.4-19.4s5.2-17.8 15.5-20.7c27.8-7.8 56.2-13.6 97.8-13.6 64.9 0 127.6 16.1 177 45.5 8.1 4.8 11.3 11 11.3 19.7-.1 10.8-8.5 19.5-19.4 19.5zm-26.9 65.6c-4.2 0-6.8-1.3-10.7-3.6-62.4-37.6-135-39.2-206.7-24.5-3.9 1-9 2.6-11.9 2.6-9.7 0-15.8-7.7-15.8-15.8 0-10.3 6.1-15.2 13.6-16.8 81.9-18.1 165.6-16.5 237 26.2 6.1 3.9 9.7 7.4 9.7 16.5s-7.1 15.4-15.2 15.4z" />
+        </svg>
+      </div>
+      <div class="taskbar-icon" onclick="if(window.chart_window) window.chart_window()">
+        <img src="https://www.last.fm/static/images/favicon.702b239b6194.ico" style="width: 24px; height: 24px;"
+          alt="Lastfm">
+      </div>
+      <div class="taskbar-icon" onclick="window.open('https://github.com/pgbito','_blank')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 98 96" fill="none">
+          <g clip-path="url(#clip0_730_27126)">
+            <path
+              d="M41.4395 69.3848C28.8066 67.8535 19.9062 58.7617 19.9062 46.9902C19.9062 42.2051 21.6289 37.0371 24.5 33.5918C23.2559 30.4336 23.4473 23.7344 24.8828 20.959C28.7109 20.4805 33.8789 22.4902 36.9414 25.2656C40.5781 24.1172 44.4062 23.543 49.0957 23.543C53.7852 23.543 57.6133 24.1172 61.0586 25.1699C64.0254 22.4902 69.2891 20.4805 73.1172 20.959C74.457 23.543 74.6484 30.2422 73.4043 33.4961C76.4668 37.1328 78.0937 42.0137 78.0937 46.9902C78.0937 58.7617 69.1934 67.6621 56.3691 69.2891C59.623 71.3945 61.8242 75.9883 61.8242 81.252L61.8242 91.2051C61.8242 94.0762 64.2168 95.7031 67.0879 94.5547C84.4102 87.9512 98 70.6289 98 49.1914C98 22.1074 75.9883 6.69539e-07 48.9043 4.309e-07C21.8203 1.92261e-07 -1.9479e-07 22.1074 -4.3343e-07 49.1914C-6.20631e-07 70.4375 13.4941 88.0469 31.6777 94.6504C34.2617 95.6074 36.75 93.8848 36.75 91.3008L36.75 83.6445C35.4102 84.2188 33.6875 84.6016 32.1562 84.6016C25.8398 84.6016 22.1074 81.1563 19.4277 74.7441C18.375 72.1602 17.2266 70.6289 15.0254 70.3418C13.877 70.2461 13.4941 69.7676 13.4941 69.1934C13.4941 68.0449 15.4082 67.1836 17.3223 67.1836C20.0977 67.1836 22.4902 68.9063 24.9785 72.4473C26.8926 75.2227 28.9023 76.4668 31.2949 76.4668C33.6875 76.4668 35.2187 75.6055 37.4199 73.4043C39.0469 71.7773 40.291 70.3418 41.4395 69.3848Z"
+              fill="black" />
+          </g>
+          <defs>
+            <clipPath id="clip0_730_27126">
+              <rect width="98" height="96" fill="white" />
+            </clipPath>
+          </defs>
+        </svg>
+      </div>
+    </div>
+    <div class="system-tray">
+      <div class="tray-icons">
+        <span title="Mostrar iconos ocultos"
+          style="font-size: 12px; transform: scaleY(0.7); display: inline-block;">▲</span>
+        <span title="Altavoces: 100%">🔊</span>
+        <span title="Acceso a Internet">📶</span>
+      </div>
+      <div class="tray-lang">ESP</div>
+      <div class="datetime">
+        <span class="time" id="taskbar-time">14:24</span>
+        <span class="date" id="taskbar-date">24/8/2026</span>
+      </div>
+      <div class="show-desktop" title="Mostrar escritorio"
+        onclick="document.querySelectorAll('.window').forEach(w => { if(w.id !== 'mobile-detect-win' && w.style.display !== 'none') w.style.display = 'none'; })">
+      </div>
     </div>
   </div>
-  <div class="window-body has-space">
-    <p>mantenimiento.</p>
-    <div role="progressbar" class="animate">
-      <div id="progress_holder" style="width: 0%"></div>
-    </div>
 
-    <button>Click me</button>
+  <!-- botón landscape/fullscreen solo en móvil -->
+  <!-- ventanita de detección móvil -->
+  <div id="mobile-detect-win" class="window glass active unselectable" style="
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 99999;
+      width: 280px;
+    ">
+    <div class="title-bar">
+      <div class="title-bar-text">📱 dispositivo detectado</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="document.getElementById('mobile-detect-win').style.display='none'"></button>
+      </div>
+    </div>
+    <div class="window-body has-space" style="flex-direction: column; gap: 10px; padding: 12px;">
+      <p style="margin: 0; font-size: 0.9em; line-height: 1.5;">se ha detectado un teléfono celular. para una mejor
+        experiencia, se recomienda ver la página en pantalla completa.</p>
+      <div style="display: flex; gap: 6px; justify-content: flex-end;">
+        <button onclick="enterMobileMode()">⛶ pantalla completa</button>
+        <button onclick="document.getElementById('mobile-detect-win').style.display='none'">cerrar</button>
+      </div>
+    </div>
   </div>
-</div> -->
-  </body>
+
+  <script>
+
+    function updateTaskbarClock() {
+      const now = new Date();
+      const timeEl = document.getElementById("taskbar-time");
+      const dateEl = document.getElementById("taskbar-date");
+      if (timeEl && dateEl) {
+        timeEl.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        dateEl.textContent = now.toLocaleDateString();
+      }
+    }
+    setInterval(updateTaskbarClock, 1000);
+    updateTaskbarClock();
+
+    // bloquear zoom por pellizco (2+ dedos)
+    document.addEventListener(
+      "touchstart",
+      function (e) {
+        if (e.touches.length > 1) e.preventDefault();
+      },
+      { passive: false },
+    );
+    document.addEventListener(
+      "touchmove",
+      function (e) {
+        if (e.touches.length > 1) e.preventDefault();
+      },
+      { passive: false },
+    );
+
+    // mostrar ventanita solo si es móvil/tablet
+    function isMobile() {
+      return window.innerWidth <= 1024 || "ontouchstart" in window;
+    }
+    if (isMobile()) {
+      document.getElementById("mobile-detect-win").style.display = "block";
+    }
+
+    // recentrar el icono de pgbito y ventanas abiertas al cambiar tamaño
+    function recentrarIcono() {
+      // esperar un frame pa que el browser actualice innerWidth/innerHeight
+      requestAnimationFrame(() => {
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight / 2;
+        // buscar el ProfilePicture por su id (win-pgbito)
+        const iconEl = document.getElementById('win-pgbito ');
+        if (iconEl) {
+          iconEl.style.left = cx + 'px';
+          iconEl.style.top = cy + 'px';
+        }
+      });
+    }
+
+    // entrar en landscape + fullscreen
+    async function enterMobileMode() {
+      document.getElementById("mobile-detect-win").style.display = "none";
+      try {
+        const el = document.documentElement;
+        if (el.requestFullscreen) await el.requestFullscreen();
+        else if (el.webkitRequestFullscreen)
+          await el.webkitRequestFullscreen();
+      } catch (e) {
+        console.warn("fullscreen no disponible:", e);
+      }
+      try {
+        if (screen.orientation && screen.orientation.lock) {
+          await screen.orientation.lock("landscape");
+        }
+      } catch (e) {
+        console.warn("orientation lock no disponible:", e);
+      }
+      // esperar a que la orientacion y el fullscreen terminen de acomodarse
+      setTimeout(recentrarIcono, 300);
+    }
+
+    // tambien recentrar si cambia el tamaño de ventana en general
+    window.addEventListener('resize', recentrarIcono);
+
+    // si salen de fullscreen, volver a mostrar la ventanita
+    document.addEventListener("fullscreenchange", function () {
+      if (!document.fullscreenElement && isMobile()) {
+        document.getElementById("mobile-detect-win").style.display = "block";
+      }
+    });
+  </script>
+
+  <!--  <div class="window glass active unselectable draggable winwin">
+      <div class="title-bar" id="draggableheader">
+        <div class="title-bar-text">:v</div>
+      </div>
+      <div class="window-body has-space">
+        <p>cargando pagina.</p>
+        <div role="progressbar" class="animate">
+          <div id="progress_holder" style="width: 0%"></div>
+        </div>
+      </div>
+    </div> -->
+</body>
+
 </html>
