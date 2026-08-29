@@ -87,7 +87,6 @@ window.chart_window = function () {
     // ===== lógica de generación =====
     let currentBlobUrl = null;
 
-    // limpieza al cerrar (mismo patrón que links_window)
     const origClose = window.chartwin.close.bind(window.chartwin);
     window.chartwin.close = function () {
         if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
