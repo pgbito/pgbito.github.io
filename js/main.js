@@ -102,6 +102,10 @@ window.errorbox = function (etitle, ...args) {
 
 
 window.links_window = function () {
+  if (window.lastfm_window) {
+    window.lastfm_window();
+    return;
+  }
   if (window.linkswin) {
     window.linkswin.focusWindow();
     return;
@@ -255,17 +259,15 @@ window.about_window1 = function () {
         "hola! soy pablo, tengo 18 años y vivo en costa rica. " +
         "acá planeo poner cosas interesantes :p",
       ),
+
       new e("p").text(
-        "me gusta la electrónica, la música, programar cosas random, el gimnasio y más " + ":v",
-      ),
-      new e("p").text(
-        "página programada por mí con ayuda del framework Win7.CSS" + ":v",
+        "página programada por mí con ayuda del framework Win7.CSS",
       ),
 
       new e("button")
         .class("about-more-btn")
-        .attr({ onclick: "window.links_window()" })
-        .text("mis links & lo que escucho →"),
+        .attr({ onclick: "if(window.lastfm_window) window.lastfm_window(); else window.links_window();" })
+        .text("Last.fm Scrobbler & música →"),
     ),
   ]);
 };
@@ -312,7 +314,31 @@ window.app1 = new ProfilePicture(
     );
   },
 );
+window.about_window2 = function () {
+  const mobile = window.innerWidth <= 1024 || 'ontouchstart' in window;
 
+  const winWidth = mobile ? Math.min(window.innerWidth - 20, 520) : 900;
+
+  window.aboutwindow = new Window(doc, "vea zorra", getcenter(), winWidth, 0, [
+    new e("div")
+      .class("unselectable")
+      .style({ position: "relative", "margin-bottom": "8px", "flex-shrink": "0" })
+      .appendMany([
+
+
+        new e("div").class("about-content").appendMany(
+
+          new e("p").text(
+            "Vea zorra la verdad necesitaremos su ayuda estamos buscando alguien que sea playo porque nosotros también somos playos 7w7",
+          ),
+
+          new e("button")
+            .class("playos-btn")
+            .attr({ onclick: "window.buscar_playos()" })
+            .text("acepto ser playo→"),
+        ),])
+  ]);
+};
 var progress = 0;
 var progress_holder = document.getElementById("progress_holder");
 if (progress_holder) {
@@ -322,3 +348,4 @@ if (progress_holder) {
     progress_holder.style.width = `${progress}%`;
   }, 10);
 }
+//window.mecagoenlaputa = new Window(doc, "?", [200, 200], getcenter(), 0, [new e("h1").text("Me cago en todas las gordas del universo"), new e("button").text("ok"),]);

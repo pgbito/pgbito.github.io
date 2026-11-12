@@ -166,16 +166,20 @@ let state = "WANDERING"; //
 let sitCooldown = 0; // evitar quese vuelta a sentar
 let sitTimer = 0; // tiempo en el que se sienta
 let currentWindowElement = null; // The window we are sitting on
+let snorlax_url = "https://img.pokemondb.net/sprites/black-white/anim/normal/snorlax.gif"
 
 const phrases = [
-    "u.u",
-    "poco de bañazos todos",
-    "hail grasa",
-    "zZz..",
+    "me pusieron cacho con richar unu",
 
-    "¿qué estás buscando?",
-    "gracias youngbasedgod",
-    "q es la vara"
+    "Sus papás se conocieron en vrchat",
+    "Ud no es un mew cállese, ud es usagi y se acabó",
+
+    "Usted sabía que no sé la diferencia entre < y >",
+
+    "ahombrese legal",
+    "Un abrazote y un besote",
+
+    "Vea zorra"
 ];
 
 function showBubble(text) {
