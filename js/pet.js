@@ -169,17 +169,61 @@ let currentWindowElement = null; // The window we are sitting on
 let snorlax_url = "https://img.pokemondb.net/sprites/black-white/anim/normal/snorlax.gif"
 
 const phrases = [
+    "u.u",
+    "poco de bañazos todos",
+    "hail grasa",
+    "zZz..",
+    "¿qué estás buscando?",
+    "gracias youngbasedgod",
+    "q es la vara",
     "me pusieron cacho con richar unu",
-
     "Sus papás se conocieron en vrchat",
     "Ud no es un mew cállese, ud es usagi y se acabó",
-
     "Usted sabía que no sé la diferencia entre < y >",
-
     "ahombrese legal",
-    "Un abrazote y un besote",
-
-    "Vea zorra"
+    "Vea zorra",
+    "Porque la puta zorra de sofía soto no informa ni picha",
+    "Ya las mac del cole son la puta mierda más tediosa que han tocado mis manos",
+    "Estoy jugando ruleta rusa con jorge a ver cuántas clases aguanto sin entregar nada",
+    "Hijueputa pickme pensó que me iba a dejar mal según ella",
+    "Kiwi es el verdadero goonerboy",
+    "Mañana le digo a jeffrey que si me deja hacer el examen con una pacha",
+    "Su puta mierda de mii se enamora de cualquier hijueputa menos de mí",
+    "De q se salió el fantasma del juego y se le metió a usted",
+    "De q el profe está escapado",
+    "Seguro por eso ando con cara de culo",
+    "No me puede doler la jupa por estrés laboral",
+    "Yo no soy air conditioner boy",
+    "Si no llega ningún bus bañazo",
+    "De q berrinche mid cracking por estar desperate",
+    "10 minutos buscando la mierda esa",
+    "Jamás seré un eevee de cualquier tipo prefiero suicidarme",
+    "Una vez tuve q hacerlo en el colegio a lo bañazo por querer farmear aura en física",
+    "Ya basta me blusheo y me tiro por la ventana del bus",
+    "La agarro a pichazos",
+    "Espero q usted tenga pasta porque si no me voy a matar",
+    "Jueputa larper",
+    "Kiwi tmb es ninfómano",
+    "Me fui a leer en qué aula me toca y no ví ni mierda",
+    "No hice ni mierda de lo que me pidió",
+    "Almohada de angry birds",
+    "Frustración nivel dios",
+    "Para ni mierda me levanté",
+    "De q si el chofer no frena me tiro por la ventana y que el MOPT me pague el ataúd",
+    "Prefiero tragarme un clavo oxidado antes que volver a pisar el aula de diseño",
+    "La orientadora me vio con una cara de que si hablo me manda a internar a la Carit",
+    "De q me dio un ataque de pánico pero aesthetic escuchando Crystal Castles",
+    "Esa mae tiene cara de que todavía le pide permiso a la mamá para ir a Walmart",
+    "Un día de estos le tiro la laptop por la jupa al profe y me largo a vivir debajo de un puente",
+    "Tengo más ganas de morir que de averiguar qué entra en el examen de mate",
+    "De q el cole huele a humedad y a bañazos sin futuro",
+    "Ese mae cree que por andar stickers de Evangelion en la botella ya tiene aura",
+    "Me voy a cambiar de identidad y hacerme pasar por un gato de la calle a ver si no me cobran impuestos",
+    "Vea zorra, si no hay café ni me dirija la palabra",
+    "De q mi salud mental depende al 100% de que no cancelen el bus de las 2",
+    "Cállese la jupa, no ve que estoy disociando en paz?",
+    "A veces siento que la profe de cívica me odia por ser superior moralmente",
+    "Tres horas en bus para venir a escuchar a un viejo hablar paja, qué rica mi vida"
 ];
 
 function showBubble(text) {

@@ -127,13 +127,23 @@ stage.appendChild(bubble); // globo de texto en el stage
 const spriteWidth = 100;
 const spriteHeight = 100;
 
-// arranca abajo, centrado horizontal
+const getGroundY = () => Math.max(0, stage.clientHeight - spriteHeight - 40);
+
+// arranca abajo en el suelo (sobre la taskbar), centrado horizontal
 let x = (stage.clientWidth - spriteWidth) / 2;
-let y = stage.clientHeight - spriteHeight;
+let y = getGroundY();
 
 let facingRight = false;
-const speed = 4;
-const wanderspeed = 1.2;
+const speed = 3;
+const wanderspeed = 0.45; // más lento y pesado para Snorlax
+
+let jumpTarget = null;
+let jumpStartX = 0;
+let jumpStartY = 0;
+let jumpTargetX = 0;
+let jumpTargetY = 0;
+let jumpProgress = 0;
+let fallVy = 0;
 
 const keys = {
     ArrowLeft: false,
@@ -167,7 +177,57 @@ let sitCooldown = 0; // evitar quese vuelta a sentar
 let sitTimer = 0; // tiempo en el que se sienta
 let currentWindowElement = null; // The window we are sitting on
 
-const phrases = ["yo lloro oyendo el padre nuestro y que", "yung beef y c.r.o te amo", "a su mama le dicen picha pq me la como toda", "bañazo", "pacha con cocaína"]
+const phrases = [
+    "yo lloro oyendo el padre nuestro y que",
+    "yung beef y c.r.o te amo",
+    "a su mama le dicen picha pq me la como toda",
+    "bañazo",
+    "pacha con cocaína",
+    "me voy directo a la luna pero catapultado desde un cañon de plasma y llego hecho añicos",
+    "hasta que se me olvide que fui tan ras playasoo",
+    "de que mae me arranco el cuerpo",
+    "YO NO ANDO GOONEANDO CON EGGMAN",
+    "Hoy me voy a meter tussi perico alcohol drogas putas travestis putitos y enanos",
+    "El casco q me había regalado Richar mae es gigantesco",
+    "Creo q ya no voy despichado ya se volco el bus",
+    "QIUEN ES ESTE MMAMAPICHAS",
+    "No se sorprenda si mañana amanecen nuevos choferes",
+    "mae amo hacer textos de mierda en chatgpt",
+    "me está diciendo playo?",
+    "esq como el vape es de playos",
+    "De q como q mí mamá no me compro binder pq decía q era de playos",
+    "Voy a ver si pago la mierda de gimnasio",
+    "Y yo sonando el carro como bañazo",
+    "No levanto ni mierda",
+    "de q llega jueputa clavicular al mopt",
+    "De q kinda true pero pura mierda",
+    "QUE RICA SOFIA SOTO LEGAL PLAYO ☆*: .｡. o(≧▽≦)o .｡.:*☆",
+    "voy a matar a todos los octavos esos y a todos los que le arruinaron la vida",
+    "mae a mí se me callan las voces de la jupa",
+    "estaba buscando mí fucking cédula",
+    "no nos vamos a drogar más",
+    "Sexo con profe edwin",
+    "Hay un bañazo sonando la moto",
+    "Gilipollas en el examen",
+    "La gente es muy hijueputa ahora",
+    "Que me olía el hocico a mierda",
+    "uno mismo se ve como un bodrio",
+    "Mae si el bus frena de pichazo salgo volando como un misil balístico",
+    "Voy a ir al gimnasio a partirme la espalda solo para no pensar en estupideces",
+    "El arroz con atún sabe a depresión pero le mete combustible a los bíceps",
+    "De q si me muero pónganme Yung Beef en el entierro y una pacha en la tumba",
+    "Mae vi un mae en la calle con tanta pinta de bañazo que casi me da algo en el pecho",
+    "Hoy me levanté con ganas de meterle un manazo a una pared de estereofón",
+    "Usted me ve aquí tranquilo pero por dentro estoy en pleno arco de villano",
+    "Mae la jupa me va a reventar de tanta tontera que habla la gente en este país",
+    "Tengo la energía de un gorila esquizofrénico en este momento legal",
+    "Legalmente el MOPT debería regalarme la licencia por pura lástima",
+    "Me tomé tres Monster y ahora escucho a Dios hablándome en código binario",
+    "Ese examen lo voy a batear tan duro que van a tener que llamar a los bomberos",
+    "De q si no entreno hoy pierdo el aura y eso sí que jamás playo",
+    "Mae qué picha no tener un millón de dólares para comprarme un carro y chocarlo adrede",
+    "Ahorita me da una sobredosis de cafeína y me pongo a pelear contra tres chatas en la parada"
+];
 
 function showBubble(text) {
     bubble.innerText = text;
@@ -184,21 +244,69 @@ snorlax.addEventListener("click", () => {
     pickNewWanderDirection();
 });
 
+function getActiveWindowTarget() {
+    const windows = Array.from(document.querySelectorAll('.window.active, .window')).filter(win => {
+        if (win.style.display === 'none') return false;
+        if (win.id === 'mobile-detect-win') return false;
+        if (win.querySelector('#progress_holder')) return false;
+        const tb = win.querySelector('.title-bar');
+        if (!tb) return false;
+        const rect = tb.getBoundingClientRect();
+        return rect.width > 60 && rect.height > 10;
+    });
+    if (!windows.length) return null;
+    const win = windows[Math.floor(Math.random() * windows.length)];
+    const tb = win.querySelector('.title-bar');
+    const rect = tb.getBoundingClientRect();
+    const sitSpriteHeight = 160;
+    const padding = 20;
+    const minX = Math.max(0, rect.left + padding);
+    const maxX = Math.max(minX, rect.right - spriteWidth - padding);
+    const targetX = minX + Math.random() * (maxX - minX);
+    const targetY = rect.bottom - sitSpriteHeight;
+    return { element: win, targetX, targetY };
+}
+
+function startJumpToWindow(target) {
+    state = "JUMPING";
+    jumpTarget = target;
+    jumpStartX = x;
+    jumpStartY = y;
+    jumpTargetX = target.targetX;
+    jumpTargetY = target.targetY;
+    jumpProgress = 0;
+}
+
 function pickNewWanderDirection() {
-    const options = [
-        { x: 1, y: 0 }, { x: -1, y: 0 },
-        { x: 0, y: 1 }, { x: 0, y: -1 },
-        { x: 1, y: 1 }, { x: 1, y: -1 },
-        { x: -1, y: 1 }, { x: -1, y: -1 }
-    ];
     if (state === "ON_WINDOW") {
-        // Only walk left or right on the window
-        const optionsWindow = [{ x: 1, y: 0 }, { x: -1, y: 0 }];
+        // En la ventana camina despacito o se queda echado
+        const optionsWindow = [{ x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 0 }];
         wanderDir = optionsWindow[Math.floor(Math.random() * optionsWindow.length)];
-        wanderTimer = 60 + Math.floor(Math.random() * 80);
-    } else {
-        wanderDir = options[Math.floor(Math.random() * options.length)];
-        wanderTimer = 40 + Math.floor(Math.random() * 60);
+        wanderTimer = 70 + Math.floor(Math.random() * 90);
+    } else if (state === "WANDERING") {
+        // Ocasionalmente salta a una ventana si hay alguna abierta
+        if (sitCooldown === 0) {
+            const target = getActiveWindowTarget();
+            if (target && Math.random() < 0.22) {
+                startJumpToWindow(target);
+                return;
+            }
+        }
+
+        // En el suelo es súper pesado y aturado (la mayor parte del tiempo quieto/durmiendo)
+        const groundOptions = [
+            { x: 0, y: 0 },
+            { x: 0, y: 0 },
+            { x: 0, y: 0 },
+            { x: 1, y: 0 },
+            { x: -1, y: 0 }
+        ];
+        wanderDir = groundOptions[Math.floor(Math.random() * groundOptions.length)];
+        if (wanderDir.x === 0) {
+            wanderTimer = 90 + Math.floor(Math.random() * 150); // rato largo aturado
+        } else {
+            wanderTimer = 40 + Math.floor(Math.random() * 60);  // pasitos cortos
+        }
     }
 }
 
@@ -215,92 +323,52 @@ function updateFacing(dirX) {
     }
 }
 
-function checkWindowCollisions() {
-    // Buscar ventanas activas (abiertas)
-    const windows = document.querySelectorAll('.window.active');
-    let foundWindow = null;
-
-    // Centro de snorlax
-    const snorlaxCenterX = x + (spriteWidth / 2);
-    const snorlaxCenterY = y + (spriteHeight / 2);
-
-    windows.forEach(win => {
-        if (win.style.display === 'none') return; // Ignorar ventanas ocultas
-        if (win.id === 'mobile-detect-win') return; // Ignorar el popup de móviles
-        // Ignorar la ventana de carga / progress bar si la hay
-        if (win.querySelector('#progress_holder')) return;
-
-        const titleBar = win.querySelector('.title-bar');
-        if (!titleBar) return;
-
-        const rect = titleBar.getBoundingClientRect();
-
-        // El punto central inferior de snorlax (sus pies)
-        const snorlaxFootX = x + (spriteWidth / 2);
-        const snorlaxFootY = y + spriteHeight;
-
-        // Si los pies de snorlax están dentro del title bar
-        if (snorlaxFootX >= rect.left && snorlaxFootX <= rect.right &&
-            snorlaxFootY >= rect.top && snorlaxFootY <= rect.bottom) {
-            foundWindow = { rect: rect, element: win };
-        }
-    });
-
-    return foundWindow;
-}
-
 function gameLoop() {
     let dirX = 0;
-    let dirY = 0;
+    const groundY = getGroundY();
 
     if (sitCooldown > 0) {
         sitCooldown--;
     }
 
-    if (state === "WANDERING" && sitCooldown === 0) {
-        const winInfo = checkWindowCollisions();
-        if (winInfo) {
+    if (state === "JUMPING") {
+        jumpProgress += 0.022; // Salto suave en arco
+        if (jumpProgress >= 1) {
             state = "ON_WINDOW";
-            currentWindowElement = winInfo.element;
+            currentWindowElement = jumpTarget.element;
+            x = jumpTargetX;
+            y = jumpTargetY;
+            snorlax.style.width = "160px";
+            snorlax.style.height = "160px";
 
-            // Adjust sprite for seated
-            snorlaxImg.src = "https://img.pokemondb.net/sprites/black-white/anim/normal/snorlax.gif"
-                ;
-            snorlax.style.width = "180px"; // Make it slightly larger to compensate for empty padding
-            snorlax.style.height = "180px"; // Fix squash
-
-            // Snap to title bar
-            const titleRect = winInfo.element.querySelector('.title-bar').getBoundingClientRect();
-            // Align feet to the bottom of the title bar
-            const sitSpriteHeight = 180;
-            y = titleRect.bottom - sitSpriteHeight;
-
-            // Hablar al sentarse el 30% de las veces
-            if (Math.random() < 0.3) {
+            // Hablar al sentarse en la ventana
+            if (Math.random() < 0.35) {
                 const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
                 showBubble(randomPhrase);
             }
-
-            // Set random sit duration (3 to 5 seconds) assuming ~60 FPS
-            sitTimer = 60 * (3 + Math.random() * 2);
+            sitTimer = 60 * (3 + Math.random() * 3); // 3 a 6 segundos sentado
+        } else {
+            const t = jumpProgress;
+            x = jumpStartX + (jumpTargetX - jumpStartX) * t;
+            const linearY = jumpStartY + (jumpTargetY - jumpStartY) * t;
+            const arcHeight = Math.max(90, Math.abs(jumpTargetY - jumpStartY) * 0.4 + 70);
+            y = linearY - 4 * arcHeight * t * (1 - t);
+            if (jumpTargetX !== jumpStartX) {
+                updateFacing(jumpTargetX - jumpStartX);
+            }
         }
-    }
-
-    if (state === "ON_WINDOW") {
+    } else if (state === "ON_WINDOW") {
         sitTimer--;
 
-        // Check if window closed or hidden
         if (!currentWindowElement || currentWindowElement.style.display === 'none') {
             sitTimer = 0;
         } else {
-            // Keep attached to title bar in case it moves
             const titleBar = currentWindowElement.querySelector('.title-bar');
             if (titleBar) {
                 const titleRect = titleBar.getBoundingClientRect();
-                const sitSpriteHeight = 180;
+                const sitSpriteHeight = 160;
                 y = titleRect.bottom - sitSpriteHeight;
 
-                // Keep X within window bounds
                 const centerX = x + (spriteWidth / 2);
                 if (centerX < titleRect.left) x = titleRect.left - (spriteWidth / 2);
                 if (centerX > titleRect.right) x = titleRect.right - (spriteWidth / 2);
@@ -308,60 +376,63 @@ function gameLoop() {
         }
 
         if (sitTimer <= 0) {
-            // Get up
-            state = "WANDERING";
+            // Se tira de la ventana de vuelta al suelo con gravedad
+            state = "FALLING";
+            fallVy = 1;
             currentWindowElement = null;
-            snorlaxImg.src = "js/snorlax.gif";
-            snorlax.style.width = "150px";
+            snorlax.style.width = "110px";
             snorlax.style.height = "100px";
-            sitCooldown = 120; // 2 seconds cooldown
-            pickNewWanderDirection();
-        }
-    }
-
-    if (state === "WANDERING") {
-        if (usingKeyboard) {
-            if (keys.ArrowRight) dirX += 1;
-            if (keys.ArrowLeft) dirX -= 1;
-            if (keys.ArrowUp) dirY -= 1;
-            if (keys.ArrowDown) dirY += 1;
         } else {
             wanderTimer--;
             if (wanderTimer <= 0) {
                 pickNewWanderDirection();
             }
             dirX = wanderDir.x;
-            dirY = wanderDir.y;
+            x += dirX * wanderspeed;
+            if (dirX !== 0) updateFacing(dirX);
         }
-    }
+    } else if (state === "FALLING") {
+        fallVy += 0.6; // gravedad
+        y += fallVy;
+        if (y >= groundY) {
+            y = groundY;
+            fallVy = 0;
+            state = "WANDERING";
+            sitCooldown = 180 + Math.floor(Math.random() * 240); // 3 a 7s cooldown para volver a saltar
+            wanderDir = { x: 0, y: 0 };
+            wanderTimer = 90; // aterriza y descansa aturado
+        }
+    } else if (state === "WANDERING") {
+        y = groundY; // Siempre en el suelo sobre la taskbar
 
-    if (dirX !== 0) updateFacing(dirX);
+        if (usingKeyboard) {
+            if (keys.ArrowRight) dirX += 1;
+            if (keys.ArrowLeft) dirX -= 1;
+            if (keys.ArrowUp && sitCooldown === 0) {
+                const target = getActiveWindowTarget();
+                if (target) startJumpToWindow(target);
+            }
+        } else {
+            wanderTimer--;
+            if (wanderTimer <= 0) {
+                pickNewWanderDirection();
+            }
+            dirX = wanderDir.x;
+        }
 
-    // Apply movement
-    x += dirX * wanderspeed;
-    if (state !== "ON_WINDOW") {
-        y += dirY * wanderspeed;
-    }
+        if (dirX !== 0) updateFacing(dirX);
+        x += dirX * wanderspeed;
 
-    // Boundaries: no se puede salir de la pantalla
-    const maxX = stage.clientWidth - spriteWidth;
-    const maxY = stage.clientHeight - spriteHeight;
-
-    if (x < 0) {
-        x = 0;
-        if (!usingKeyboard) pickNewWanderDirection();
-    }
-    if (x > maxX) {
-        x = maxX;
-        if (!usingKeyboard) pickNewWanderDirection();
-    }
-    if (y < 0) {
-        y = 0;
-        if (!usingKeyboard) pickNewWanderDirection();
-    }
-    if (y > maxY) {
-        y = maxY;
-        if (!usingKeyboard) pickNewWanderDirection();
+        // Limites horizontales de pantalla
+        const maxX = stage.clientWidth - spriteWidth;
+        if (x < 0) {
+            x = 0;
+            if (!usingKeyboard) pickNewWanderDirection();
+        }
+        if (x > maxX) {
+            x = maxX;
+            if (!usingKeyboard) pickNewWanderDirection();
+        }
     }
 
     snorlax.style.left = x + "px";
