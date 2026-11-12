@@ -16,24 +16,24 @@ export function openPaintWindow(customImageSrc) {
   const screenH = window.innerHeight;
   const mobile = screenW <= 768;
 
-  // Window & canvas dimensions matching screenshot layout
+  // On mobile, ensure window fits comfortably within the screen with margins
   const winWidth = mobile
-    ? Math.min(screenW - 20, 360)
+    ? Math.min(screenW - 24, 340)
     : Math.min(625, Math.floor(screenW * 0.62));
 
-  // Canvas size: ~350x197 on desktop (centered horizontally in workspace)
-  const canvasImgW = mobile ? Math.min(winWidth - 28, 300) : 350;
+  // Canvas size: ~350x197 on desktop, responsive on mobile
+  const canvasImgW = mobile ? Math.min(winWidth - 28, 290) : 350;
   const canvasImgH = Math.round(canvasImgW * (9 / 16));
 
-  // Snug height trimmed right at status bar
-  const winHeight = mobile ? Math.min(screenH - 70, 335) : 345;
+  // Snug height trimmed right around canvas (no bottom status bar)
+  const winHeight = mobile ? Math.min(screenH - 70, 290) : 305;
 
-  // Position: top-left quadrant on desktop, top-left on mobile
+  // Position: centered horizontally on mobile so it never goes off either edge
   const posX = mobile
-    ? Math.round(winWidth / 2 + 10)
+    ? Math.round(screenW / 2)
     : Math.round(Math.max(winWidth / 2 + 15, screenW * 0.35));
   const posY = mobile
-    ? Math.round(winHeight / 2 + 14)
+    ? Math.round(winHeight / 2 + 12)
     : Math.round(Math.max(winHeight / 2 + 15, screenH * 0.29));
 
   const imageSrc = customImageSrc || window.paint_showcase_image || DEFAULT_IMAGE;
@@ -231,25 +231,7 @@ export function openPaintWindow(customImageSrc) {
   canvasWrapper.appendMany(canvasImg, resizeHandle);
   workspace.append(canvasWrapper);
 
-  // Status Bar at bottom
-  const statusBar = new e("div").class("w7-paint-status-bar").html(`
-    <div class="w7-paint-status-field" id="w7-paint-dimensions">📐 1920 x 1080px</div>
-    <div class="w7-paint-status-field" style="margin-left:auto; display:flex; align-items:center; gap:8px;">
-      <span>100%</span>
-      <span style="font-size:10px;">➖ ━━━━●━━━━ ➕</span>
-    </div>
-  `);
-
-  // Update dimensions once image loads
-  canvasImg.on("load", () => {
-    const dimEl = document.getElementById("w7-paint-dimensions");
-    const rawImg = document.getElementById("w7-paint-canvas-img");
-    if (dimEl && rawImg) {
-      dimEl.innerText = `📐 ${rawImg.naturalWidth} x ${rawImg.naturalHeight}px`;
-    }
-  });
-
-  paintApp.appendMany(ribbonBar, workspace, statusBar);
+  paintApp.appendMany(ribbonBar, workspace);
 
   // Create Window
   window.paintwin = new Window(
@@ -261,11 +243,16 @@ export function openPaintWindow(customImageSrc) {
     [paintApp]
   );
 
-  // Remove default body padding so Paint ribbon and workspace fit edge-to-edge
+  // Remove default body padding & ensure Paint fits edge-to-edge inside the window frame
   if (window.paintwin.content) {
+    window.paintwin.content.classList.add("w7-paint-body");
     window.paintwin.content.style.padding = "0px";
     window.paintwin.content.style.alignItems = "stretch";
     window.paintwin.content.style.overflow = "hidden";
+  }
+  if (window.paintwin.window && window.paintwin.window.elm) {
+    window.paintwin.window.elm.style.overflow = "hidden";
+    window.paintwin.window.elm.style.boxSizing = "border-box";
   }
 
   // Paint Palette Icon & Title in title bar
