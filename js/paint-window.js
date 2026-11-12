@@ -16,19 +16,19 @@ export function openPaintWindow(customImageSrc) {
   const screenH = window.innerHeight;
   const mobile = screenW <= 768;
 
-  // On mobile, ensure window fits comfortably within the screen with margins
-  const winWidth = mobile
-    ? Math.min(screenW - 24, 340)
-    : Math.min(625, Math.floor(screenW * 0.62));
-
-  // Canvas size: ~350x197 on desktop, responsive on mobile
-  const canvasImgW = mobile ? Math.min(winWidth - 28, 290) : 350;
+  // Canvas image dimensions at 16:9
+  const canvasImgW = mobile
+    ? Math.min(screenW - 40, 320)
+    : Math.min(460, Math.floor(screenW * 0.42));
   const canvasImgH = Math.round(canvasImgW * (9 / 16));
 
-  // Snug height trimmed right around canvas (no bottom status bar)
-  const winHeight = mobile ? Math.min(screenH - 70, 290) : 305;
+  // Window width tightly coupled to image width (+ 16px workspace padding)
+  const winWidth = canvasImgW + 16;
 
-  // Position: centered horizontally on mobile so it never goes off either edge
+  // Window height tightly coupled to ribbon (92px) + image (canvasImgH) + workspace padding (12px)
+  const winHeight = canvasImgH + 104;
+
+  // Position: centered horizontally on mobile, upper-left on desktop
   const posX = mobile
     ? Math.round(screenW / 2)
     : Math.round(Math.max(winWidth / 2 + 15, screenW * 0.35));
