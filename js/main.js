@@ -218,14 +218,26 @@ window.links_window = function () {
 
 
 window.about_window1 = function () {
-  const mobile = window.innerWidth <= 1024 || 'ontouchstart' in window;
+  const screenW = window.innerWidth;
+  const screenH = window.innerHeight;
+  const mobile = screenW <= 1024 || 'ontouchstart' in window;
   const frameSize = mobile ? 120 : 200;
   const pfpSize = mobile ? 80 : 135;
   const pfpTop = mobile ? '17px' : '28px';
   const pfpLeft = mobile ? '22px' : '36px';
-  const winWidth = mobile ? Math.min(window.innerWidth - 20, 520) : 900;
+  const winWidth = mobile
+    ? Math.min(screenW - 20, 520)
+    : Math.min(760, Math.floor(screenW * 0.74));
 
-  window.aboutwindow = new Window(doc, "✦ sobre mí", getcenter(), winWidth, 0, [
+  // Position down and to the right so Paint stays visible above and to the left
+  const pos = mobile
+    ? [Math.round(screenW / 2), Math.round(screenH / 2 + 40)]
+    : [
+        Math.min(screenW - Math.round(winWidth / 2 + 15), Math.round(screenW * 0.61)),
+        Math.min(screenH - 180, Math.round(screenH * 0.65)),
+      ];
+
+  window.aboutwindow = new Window(doc, "✦ sobre mí", pos, winWidth, 0, [
     new e("div")
       .class("unselectable")
       .style({ position: "relative", "margin-bottom": "8px", "flex-shrink": "0" })
@@ -264,10 +276,17 @@ window.about_window1 = function () {
         "página programada por mí con ayuda del framework Win7.CSS",
       ),
 
-      new e("button")
-        .class("about-more-btn")
-        .attr({ onclick: "if(window.lastfm_window) window.lastfm_window(); else window.links_window();" })
-        .text("Last.fm Scrobbler & música →"),
+      new e("div").style({ display: "flex", gap: "8px", "flex-wrap": "wrap", "margin-top": "8px" }).appendMany(
+        new e("button")
+          .class("about-more-btn")
+          .attr({ onclick: "if(window.lastfm_window) window.lastfm_window(); else window.links_window();" })
+          .text("Last.fm Scrobbler →"),
+        new e("button")
+          .class("about-more-btn")
+          .style({ background: "linear-gradient(to bottom, #15803d, #166534)", "border-color": "#14532d" })
+          .attr({ onclick: "if(window.wmp_radio) window.wmp_radio();" })
+          .text("📻 Radio Y2K (WMP)"),
+      ),
     ),
   ]);
 };
@@ -309,6 +328,9 @@ window.app1 = new ProfilePicture(
           ]);
           setTimeout(() => tip.close(), 4000);
         }, 400);
+        setTimeout(() => {
+          if (window.paint_window) window.paint_window();
+        }, 1200);
         setTimeout(window.about_window1, 1500);
       },
     );

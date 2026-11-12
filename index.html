@@ -17,6 +17,8 @@
   <script type="module" src="/js/chart-generator.js"></script>
   <script type="module" src="/js/chart-window.js"></script>
   <script type="module" src="/js/lastfm-window.js"></script>
+  <script type="module" src="/js/paint-window.js"></script>
+  <script type="module" src="/js/wmp-window.js"></script>
   <script type="module" src="/js/main.js"></script>
   <script type="module" src="/js/snorlax.js"></script>
   <script type="module" src="/js/pet.js"></script>
@@ -820,6 +822,318 @@
       border-color: #999;
     }
 
+    /* === Windows 7 MS Paint Window Styling === */
+    .w7-paint-app {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      background: #f0f0f0;
+      font-family: 'Segoe UI', Tahoma, Helvetica, sans-serif;
+      font-size: 11px;
+      color: #1e1e1e;
+      overflow: hidden;
+      user-select: none;
+      box-sizing: border-box;
+    }
+
+    /* Top Tabs Row */
+    .w7-paint-tabs-row {
+      display: flex;
+      align-items: flex-end;
+      background: #e0e5eb;
+      border-bottom: 1px solid #abadb3;
+      padding: 2px 6px 0 6px;
+      gap: 4px;
+      height: 26px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+    }
+
+    .w7-paint-file-btn {
+      background: linear-gradient(to bottom, #1f6fd8, #1355a8);
+      color: #ffffff;
+      padding: 2px 10px;
+      border-radius: 2px 2px 0 0;
+      font-weight: bold;
+      cursor: pointer;
+      border: 1px solid #0f4488;
+      border-bottom: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 21px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    .w7-paint-file-btn:hover {
+      background: linear-gradient(to bottom, #2b7ee8, #1765c8);
+    }
+
+    .w7-paint-tab {
+      padding: 3px 12px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-bottom: none;
+      border-radius: 3px 3px 0 0;
+      color: #333;
+      font-size: 11px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    .w7-paint-tab.active {
+      background: #f5f6f7;
+      border-color: #abadb3;
+      border-bottom: 1px solid #f5f6f7;
+      margin-bottom: -1px;
+      font-weight: 600;
+      color: #111;
+      z-index: 2;
+    }
+
+    .w7-paint-tab:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.45);
+    }
+
+    /* Ribbon Body */
+    .w7-paint-ribbon-body {
+      background: linear-gradient(to bottom, #f5f6f7 0%, #e5e8eb 100%);
+      border-bottom: 1px solid #abadb3;
+      display: flex;
+      padding: 4px 6px;
+      gap: 2px;
+      height: 96px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .w7-paint-group {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-right: 1px solid #dcdcdc;
+      padding: 0 5px;
+      margin-right: 2px;
+      flex-shrink: 0;
+    }
+
+    .w7-paint-group-content {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .w7-paint-group-label {
+      text-align: center;
+      font-size: 10px;
+      color: #666;
+      margin-top: 2px;
+      user-select: none;
+    }
+
+    .w7-paint-big-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-radius: 2px;
+      font-size: 10.5px;
+      gap: 2px;
+      height: 60px;
+      box-sizing: border-box;
+    }
+
+    .w7-paint-big-btn:hover,
+    .w7-paint-small-btn:hover,
+    .w7-paint-tool-btn:hover,
+    .w7-paint-shape-btn:hover {
+      background: #e5f1fb;
+      border-color: #70c0e7;
+    }
+
+    .w7-paint-small-col {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      justify-content: center;
+    }
+
+    .w7-paint-small-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 4px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-radius: 2px;
+      font-size: 10px;
+    }
+
+    .w7-paint-tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 20px);
+      grid-template-rows: repeat(2, 20px);
+      gap: 2px;
+      align-content: center;
+    }
+
+    .w7-paint-tool-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-radius: 2px;
+      font-size: 11px;
+    }
+
+    .w7-paint-shapes-palette {
+      display: grid;
+      grid-template-columns: repeat(6, 17px);
+      grid-template-rows: repeat(2, 17px);
+      gap: 2px;
+      background: #fff;
+      border: 1px solid #abadb3;
+      padding: 3px;
+      border-radius: 2px;
+    }
+
+    .w7-paint-shape-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 10px;
+      color: #333;
+      border: 1px solid transparent;
+    }
+
+    .w7-paint-colors-section {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .w7-paint-color-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2px 4px;
+      border: 1px solid transparent;
+      border-radius: 2px;
+      cursor: pointer;
+      font-size: 9.5px;
+    }
+
+    .w7-paint-color-box.active {
+      background: #e5f1fb;
+      border-color: #70c0e7;
+    }
+
+    .w7-paint-color-preview {
+      width: 20px;
+      height: 20px;
+      border: 1px solid #777;
+      border-radius: 1px;
+      box-shadow: inset 0 0 1px #000;
+      margin-bottom: 2px;
+    }
+
+    .w7-paint-palette-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 14px);
+      grid-template-rows: repeat(2, 14px);
+      gap: 2px;
+      background: #fff;
+      border: 1px solid #abadb3;
+      padding: 3px;
+      border-radius: 2px;
+    }
+
+    .w7-color-dot {
+      width: 14px;
+      height: 14px;
+      border: 1px solid #999;
+      box-sizing: border-box;
+      cursor: pointer;
+    }
+
+    .w7-color-dot:hover {
+      outline: 1px solid #0078d7;
+    }
+
+    /* Paint Canvas Workspace */
+    .w7-paint-workspace {
+      flex: 1;
+      background: #d6dde5;
+      overflow: hidden;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .w7-paint-canvas-wrapper {
+      background: #ffffff;
+      box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.28);
+      position: relative;
+      max-width: 100%;
+      display: inline-flex;
+      border: 1px solid #bbb;
+    }
+
+    /* Fixed, strictly unselectable showcase image */
+    .w7-paint-canvas-img {
+      max-width: 100%;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      pointer-events: none;
+      -webkit-user-drag: none;
+      -webkit-touch-callout: none;
+    }
+
+    /* Authentic tiny corner resize handle */
+    .w7-paint-resize-handle {
+      position: absolute;
+      right: -4px;
+      bottom: -4px;
+      width: 4px;
+      height: 4px;
+      background: #ffffff;
+      border: 1px solid #333;
+      pointer-events: none;
+    }
+
+    /* Status Bar */
+    .w7-paint-status-bar {
+      background: #f0f0f0;
+      border-top: 1px solid #d4d4d4;
+      padding: 2px 10px;
+      font-size: 11px;
+      color: #555;
+      display: flex;
+      align-items: center;
+      height: 20px;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
     body::before {
       content: "";
       position: fixed;
@@ -1083,6 +1397,18 @@
       <div class="taskbar-icon" onclick="if(window.lastfm_window) window.lastfm_window(); else window.open('https://last.fm/pgbito','_blank');">
         <img src="https://www.last.fm/static/images/favicon.702b239b6194.ico" style="width: 24px; height: 24px;"
           alt="Lastfm">
+      </div>
+      <div class="taskbar-icon" onclick="if(window.paint_window) window.paint_window();" title="Paint">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#e67e22">
+          <path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10c1.38 0 2.5-1.12 2.5-2.5 0-.61-.23-1.21-.64-1.67-.08-.1-.13-.21-.13-.33 0-.28.22-.5.5-.5H16c3.31 0 6-2.69 6-6 0-4.96-4.49-9-10-9zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 8 6.5 8 8 8.67 8 9.5 7.33 11 6.5 11zm3-4c-.83 0-1.5-.67-1.5-1.5S8.67 4 9.5 4s1.5.67 1.5 1.5S10.33 7 9.5 7zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 4 14.5 4s1.5.67 1.5 1.5S15.33 7 14.5 7zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 8 17.5 8s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+        </svg>
+      </div>
+      <div class="taskbar-icon" onclick="if(window.wmp_radio) window.wmp_radio();" title="Windows Media Player - Radio Y2K">
+        <svg width="22" height="22" viewBox="0 0 48 48">
+          <circle cx="24" cy="24" r="22" fill="#ea580c" stroke="#ffffff" stroke-width="2"/>
+          <polygon points="19,14 35,24 19,34" fill="#ffffff" />
+          <polygon points="21,17 33,24 21,31" fill="#2563eb" />
+        </svg>
       </div>
       <div class="taskbar-icon" onclick="window.open('https://github.com/pgbito','_blank')">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 98 96" fill="none">
